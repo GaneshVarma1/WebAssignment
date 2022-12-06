@@ -1,4 +1,4 @@
-# Heading NOTE TAKING APPLICATION
+# NOTE TAKING APPLICATION
 
 ### Heading Description
 
