@@ -21,6 +21,19 @@ router
     }
   })
 
+  router.post('/getnotes', async(req,res)=> {
+    try {
+       console.log(req.body);
+      const note =await Note.getNote(req.body);
+      res.json(note);
+  
+    }
+    catch(err){
+      res.status(401).send({message: 'error in note'});
+    }
+  })
+  
+
   .put('/edit', async (req, res) => {
     try {
       let notes = await Note.editNote(req.body);

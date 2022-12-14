@@ -7,12 +7,14 @@
 <link rel="icon" type="favicon" href="images/favicon.png">
 </head>
 <body>
-  <ul>
+  <nav></nav>
+
+  <!-- <ul>
     <li><a href="homepage.html">Home</a></li>
     <li><a href="register.html">SignUp</a></li>
     <li><a href="loginpage.html">SignIn</a></li>
     <li><a href="notepage.html">Page For Notes</a></li>
-  </ul>
+  </ul> -->
 <form  method="post" id="petregister">
   <table>
     <tr>
@@ -22,18 +24,20 @@
       <td>
         <div class="container">
           <h1> Register Page </h1>
+          <p class="error"></p>
+
           <label for="uname"><b>Your name</b></label>
           <input type="text" placeholder="Enter Name" name="uname" required id="fname">
           <label for="uname"><b>Pet Name</b></label>
           <input type="text" placeholder="Enter Pet Name" name="pname" required id="pname">
           <label for="uname"><b>Email</b></label>
-          <input type="text" placeholder="Enter Username" name="email" required id="email">
+          <input type="text" placeholder="Enter Email" name="email" required id="email">
           <label for="psw"><b>Password</b></label>
           <input type="password" placeholder="Enter Password" name="psw" required id="psw">
         </div>
 
         <div class="submit">
-          <button type="submit" id="submit" onclick="alert('registration successful')">Register</button>
+          <button type="submit" id="submit" >Register</button>
         </div>
 
       </form>
@@ -43,7 +47,8 @@
   <!-- <div> -->
    <!-- </div> -->
 
-   <script src="Scripts/myscript.js"></script>
-
+   <script type="module" src="scripts/myscript.js" charset="utf-8"></script>
+   <script type="module" src="scripts/main.js" charset="utf-8"></script>
+ 
 </body>
 </html>

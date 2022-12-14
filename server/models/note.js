@@ -3,9 +3,10 @@ const con = require("./db_connect");
 async function createTable() {
   let sql=`CREATE TABLE IF NOT EXISTS notes (
     noteID INT NOT NULL AUTO_INCREMENT,
-    userID INT NOT NULL AUTO_INCREMENT,
+    userID INT NOT NULL,
+    emailId VARCHAR(255) NOT NULL,
     noteContent VARCHAR(255) NOT NULL,
-    CONSTRAINT userPK PRIMARY KEY(userID)
+    CONSTRAINT userPK PRIMARY KEY(noteID)
   ); `
   await con.query(sql);
 }
@@ -19,12 +20,21 @@ async function getAllNotes() {
 
 }
 
-async function registerNote(note) {
-  let mynote = await getNote(note);
-  if(mynote.length > 0) throw Error("NoteID already in use");
+async function getNote(note) {
+  console.log(note);
 
-  const sql= `INSERT INTO notes (noteID, userID,noteContent)
-    VALUES (${note.noteID}, "${note.userID}","${note.noteContent}");
+  let sql = `
+    SELECT * FROM notes
+      WHERE emailId = "${note.emailId}"
+  `;
+  console.log(sql);
+
+  return await con.query(sql);
+}
+
+async function registerNote(note) {
+    const sql= `INSERT INTO notes ( userID,emailId,noteContent)
+    VALUES (${note.userID}, "${note.emailId}","${note.noteContent}");
   `
   console.log(note);
   await con.query(sql);
@@ -50,23 +60,7 @@ async function deleteNote(note) {
   await con.query(sql);
 }
 
-async function getNote(note) {
-  let sql;
-
-  if(note.noteID) {
-    sql = `
-      SELECT * FROM notes
-       WHERE noteID = ${note.noteID}
-    `
-  } else {
-    sql = `
-    SELECT * FROM notes
-      WHERE noteContent = "${note.noteContent}"
-  `;
-  }
-  return await con.query(sql);
-}
 
 
 
-module.exports = { getAllNotes, editNote, deleteNote,registerNote};
+module.exports = { getAllNotes, editNote, deleteNote,registerNote, getNote};

@@ -7,32 +7,69 @@
     <link rel="stylesheet" href="week3.css">
   </head>
   <body>
-    <ul>
-      <li><a href="homepage.html">Home</a></li>
-      <li><a href="register.html">SignUp</a></li>
-      <li><a href="loginpage.html">SignIn</a></li>
-      <li><a href="notepage.html">Page For Notes</a></li>
-    </ul>
-    <button type="button" name="button" id='noteBtn'>Get Users </button>
-    <table id="tab">
+    <nav></nav>
+    <!-- <button type="button" name="button" id='noteBtn'>Get Users </button> -->
+    <!-- <table id="tab" class="getnotes">
       <tr>
-        <td>USER_Id</td>
-        <td>Note_Id</td>
         <td>Note_Written</td>
       </tr>
       <td></td>
-    </table>
+    </table> -->
+    <p class="getnotes"></p>
 
     <form action="#final" id="notepage">
   <p><label for="Notes">You can Write Your Notes Here:</label></p>
 
-  <textarea id="textnote" name="notes" rows="40" cols="100">All Pets are Cute.</textarea>
+  <textarea id="textnote" name="notes" rows="30" cols="100">All Pets are Cute.</textarea>
   <br>
   <br>
-  <button type="notebutton" name="notebutton" onclick="alert('Note added')" id="submit">Add Note</button>
+  <button type="notebutton" name="notebutton"  id="submit">Add Note</button>
 
 </form>
-<script src="Scripts/myscript.js"></script>
+<script type="module">
+  import { fetchData, setCurrentUser, getCurrentUser } from '/Scripts/main.js'
+  document.getElementById("getnotes").innerHTML = getnote();
+
+  function getnote()
+  {
+    let object = getCurrentUser();
+    fetchData("note/getnotes", object, "POST")
+    
+    .then((res) => {
+      let p = document.querySelector('.getnotes');
+      for(let i=0;i<res.length;i++)
+      {
+          p.innerHTML+=JSON.stringify(res[i].noteContent);
+          p.innerHTML+= " ,  ";
+      }
+      //  p.innerHTML=  JSON.stringify(res);
+
+    })
+    .catch((err) => {
+      let p = document.querySelector('.error');
+      p.innerHTML = err.message;
+    }) 
+//   .then((res) => {
+//     let ul=document.getElementById("tab");
+//     data.forEach((user) => {
+//     let newNode=document.createElement('tr');
+//    let childNode0=document.createElement('td');
+//    let text0=document.createTextNode(JSON.stringify(res));
+//    childNode0.appendChild(text0);
+//    newNode.appendChild(childNode0);
+//    ul.appendChild(newNode);
+//   }
+// )
+// })
+//       .catch((err)=>console.log(`Error! ${err}`));
+
+   }
+
+
+</script>
+
+  <script type="module" src="Scripts/myscript.js" charset="utf-8"></script>
+  <script type="module" src="Scripts/main.js" charset="utf-8"></script>
 
   </body>
 </html>

@@ -1,3 +1,5 @@
+import { fetchData, setCurrentUser, getCurrentUser } from './main.js'
+
 const petregister = document.getElementById("petregister");
 if(petregister) petregister.addEventListener('submit', displayPetregister);
 
@@ -7,169 +9,159 @@ if(notepage) notepage.addEventListener('submit', displayNote);
 const petlogin = document.getElementById("petlogin");
 if(petlogin) petlogin.addEventListener('submit',displayLogin);
 
-const userBtn=document.getElementById('user-button');
-if(userBtn) userBtn.addEventListener('click',getUsers);
-
-const noteBtn=document.getElementById('noteBtn');
-if(noteBtn) noteBtn.addEventListener('click',getNote);
-
 
 function displayPetregister(e) {
   e.preventDefault();
 
-  let fname = document.getElementById("fname").value;
-  let pname = document.getElementById("pname").value;
-  let email = document.getElementById("email").value;
-  let psw = document.getElementById("psw").value;
-  let user = new User(fname, pname, email,psw);
+  let userName = document.getElementById("fname").value;
+  let petName = document.getElementById("pname").value;
+  let emailId = document.getElementById("email").value;
+  let password = document.getElementById("psw").value;
+  let user = new User(userName, petName, emailId,password);
   console.log(user);
+
+  fetchData("users/register", user, "POST")
+  .then((data) => {
+    setCurrentUser(data);
+    console.log(data);
+    window.location.href = "notepage.html";
+  })
+  .catch((err) => {
+    let p = document.querySelector('.error');
+    p.innerHTML = err.message;
+  }) 
+
 
 }
 
 function displayNote(e) {
     e.preventDefault();
-
-    let textnote = document.getElementById('textnote').value;
-    let notepage = new Note(textnote);
+    let object = getCurrentUser();
+    let userID = object.userID;
+    let emailId = object.emailId;
+    let noteContent = document.getElementById('textnote').value;
+    let notepage = new Note(userID,emailId,noteContent);
     console.log(notepage);
-}
+    fetchData("note/registernote", notepage, "POST")
+    
+    .then((data) => {
+      window.location.href = "notepage.html";
+  
+  
+    })
+    .catch((err) => {
+      let p = document.querySelector('.error');
+      p.innerHTML = err.message;
+    }) 
+  }
 
 function displayLogin(e) {
     e.preventDefault();
 
-    let fname = document.getElementById("uname").value;
-    let psw = document.getElementById("psw").value;
-    let user = new User(null,null,fname,psw);
+    let emailId = document.getElementById("uname").value;
+    let password = document.getElementById("psw").value;
+    let user = new User(null,null,emailId,password);
     console.log(user);
 
+    fetchData("users/login", user, "POST")
+    .then((data) => {
+    setCurrentUser(data);
+    window.location.href = "notepage.html";
+
+  })
+  .catch((err) => {
+    let p = document.querySelector('.error');
+    p.innerHTML = err.message;
+  }) 
 }
 
 class Note {
-    constructor(textnote) {
-       this.textnote = textnote;
+    constructor(userID,emailId,noteContent) {
+      this.userID = userID;
+      this.emailId = emailId;
+       this.noteContent = noteContent;
     }
 
     getNote()
     {
-        return this.textnote;
+        return this.noteContent;
     }
 
     setNote()
     {
-        this.textnote=textnote;
+        this.noteContent=noteContent;
+    }
+
+    getId()
+    {
+      return this.userID;
+    }
+
+    setId()
+    {
+      this.userID = this.userID;
+    }
+    getMail()
+    {
+      return this.emailId;
+    }
+    setMail()
+    {
+      this.emailId = emailId;
     }
 
 
 }
 
 class User {
-  constructor(fname, pname, email,psw) {
-    this.fname=fname;
-    this.pname=pname;
-    this.email=email;
-    this.psw=psw;
+  constructor(userName, petName, emailId,password) {
+    this.userName=userName;
+    this.petName=petName;
+    this.emailId=emailId;
+    this.password=password;
   }
 
   getFirstName()
   {
-    return this.fname;
+    return this.userName;
   }
 
   getLastName()
   {
-    return this.pname;
+    return this.petName;
   }
 
   getEmail()
   {
-    return this.email;
+    return this.emailId;
   }
 
   getPassword()
   {
-    return this.psd;
+    return this.password;
   }
 
   setPassword()
   {
-    this.psw=psw;
+    this.password=password;
   }
 
   setEmail()
   {
-    this.email=email;
+    this.emailId=emailId;
   }
 
   setFirstName()
   {
-    this.fname=fname;
+    this.userName=userName;
   }
 
-  setLastName()
+  setPetName()
   {
-    this.pname=pname;
+    this.petName=petName;
   }
 }
 
 
-function getUsers() {
-  fetch("http://localhost:3000/users")
-  .then((res) => res.json())
-  .then((data)=> {
-    let ul=document.getElementById("tab");
-    data.forEach((user) => {
-    let newNode=document.createElement('tr');
-   let childNode0=document.createElement('td');
-   let childNode1=document.createElement('td');
-   let childNode2=document.createElement('td');
-   let childNode3=document.createElement('td');
-   let childNode4=document.createElement('td');
-   let text0=document.createTextNode(user.userId);
-   let text=document.createTextNode(user.userName);
-   let text1=document.createTextNode(user.petName);
-   let text2=document.createTextNode(user.emailId);
-   let text3=document.createTextNode(user.password);
-   childNode0.appendChild(text0);
-   childNode1.appendChild(text);
-   childNode2.appendChild(text1);
-   childNode3.appendChild(text2);
-   childNode4.appendChild(text3);
-   newNode.appendChild(childNode0);
-   newNode.appendChild(childNode1);
-   newNode.appendChild(childNode2);
-   newNode.appendChild(childNode3);
-   newNode.appendChild(childNode4);
-   ul.appendChild(newNode);
-  }
-)
-})
-      .catch((err)=>console.log(`Error! ${err}`));
 
-}
-function getNote() {
-  fetch("http://localhost:3000/note")
-  .then((res) => res.json())
-  .then((data)=> {
-    let ul=document.getElementById("tab");
-    console.log('hi');
-    data.forEach((notes) => {
-    let newNode=document.createElement('tr');
-    let childNode0=document.createElement('td');
-    let childNode1=document.createElement('td');
-    let childNode2=document.createElement('td');
-    let text=document.createTextNode(notes.userId);
-    let text1=document.createTextNode(notes.noteId);
-    let text2=document.createTextNode(notes.noteContent);
-    childNode0.appendChild(text);
-    childNode1.appendChild(text1);
-    childNode2.appendChild(text2);
-    newNode.appendChild(childNode0);
-    newNode.appendChild(childNode1);
-    newNode.appendChild(childNode2);
-    ul.appendChild(newNode);
-    console.log(notes);
-  }
-)
-})
-  .catch((err)=>console.log(`Error! ${err}`));
-}
+
